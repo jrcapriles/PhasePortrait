@@ -11,17 +11,13 @@ Created on Sat Feb  1 16:09:43 2014
 
 from numpy import *
 import pylab as p
-
-# Import files with derivatives functions and initial conditions
-#import derivativesFunc as dx
 import init as init
 
 #List of the function names availables
 FuntionNameList = ["Hyperbolic", "Simple", "Magnetic", "Duffing", "Vanderpol"]
 
 #Select the function that you want to work with
-functionName = "Duffing"
-
+functionName = "Simple"
 
 dxfunction, dx2function, dxic = init.init(functionName)
 
@@ -98,7 +94,7 @@ f2 = p.figure()
 for v, col in zip(values, vcolors): 
     X0 = v * dxic[1]                               # starting point
     X = integrate.odeint( dxfunction, X0, t)                 # we don't need infodict here
-    p.plot( X[:,0], X[:,1], lw=3.5*v, color=col, label='X0=(%.f, %.f)' % ( X0[0], X0[1]) )
+    p.plot( X[:,0], X[:,1], lw=3.5*v, color=col, label='X0=(%.3f, %.3f)' % ( X0[0], X0[1]) )
     #print 'X0=(%2.f,%2.f) => I ~ %.1f |delta = %.3G %%' % (X0[0], X0[1], I_mean, delta) Add feedback
 
 # define a grid and compute direction at each point
