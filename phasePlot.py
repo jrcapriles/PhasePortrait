@@ -13,12 +13,18 @@ from numpy import *
 import pylab as p
 
 # Import files with derivatives functions and initial conditions
-import derivativesFunc as dx
-import initialConditions as ic
+#import derivativesFunc as dx
+import init as init
 
-# Select the function to test:
-dxfunction = dx.dX_dt_Vanderpol
-dx2function = dx.d2X_dt2_Vanderpol
+#List of the function names availables
+FuntionNameList = ["Hyperbolic", "Simple", "Magnetic", "Duffing", "Vanderpol"]
+
+#Select the function that you want to work with
+functionName = "Duffing"
+
+
+dxfunction, dx2function, dxic = init.init(functionName)
+
 # load initials conditions to test
 X0 = array([1, 1])                      
 
@@ -31,7 +37,7 @@ def testIC( fun, *args ):
     print 'IC test passed!'
 
 
-testIC(dxfunction,ic.X_f0_Vanderpol,ic.X_f1_Vanderpol)
+testIC(dxfunction,dxic[0],dxic[1])
 
 # === Stability of the fixed points ===
 # Near equilibrium points the system can be linearized:
@@ -43,7 +49,7 @@ def evalJacobian( fun, *args ):
     return A
     
 #Call eval Jacobian function
-A_f1 = evalJacobian(dx2function,ic.X_f1_Vanderpol)  
+A_f1 = evalJacobian(dx2function,dxic[1])  
 # whose eigenvalues are:
 lambda1, lambda2 = linalg.eigvals(A_f1)
 T_f1 = 2*pi/abs(lambda1)               
@@ -90,7 +96,7 @@ vcolors = p.cm.autumn_r(linspace(0.3, 1., len(values)))  # colors for each traje
 # plot trajectories
 f2 = p.figure()
 for v, col in zip(values, vcolors): 
-    X0 = v * ic.X_f1_Vanderpol                               # starting point
+    X0 = v * dxic[1]                               # starting point
     X = integrate.odeint( dxfunction, X0, t)                 # we don't need infodict here
     p.plot( X[:,0], X[:,1], lw=3.5*v, color=col, label='X0=(%.f, %.f)' % ( X0[0], X0[1]) )
     #print 'X0=(%2.f,%2.f) => I ~ %.1f |delta = %.3G %%' % (X0[0], X0[1], I_mean, delta) Add feedback
