@@ -17,7 +17,7 @@ import init as init
 FuntionNameList = ["Hyperbolic", "Simple", "Magnetic", "Duffing", "Vanderpol", "Violin"]
 
 #Select the function that you want to work with
-functionName = "Duffing"
+functionName = "Violin"
 
 dxfunction, dx2function, dxic = init.init(functionName)
 
@@ -80,7 +80,7 @@ p.legend(loc='best')
 p.xlabel('time')
 p.ylabel('outputs')
 p.title('Evolution of y1 and y2')
-f1.savefig(functionName + '_y1_and_y2_outputs.png')
+f1.savefig('plots/' + functionName + '_y1_and_y2_outputs.png')
  
  
 # == Plotting direction fields and trajectories in the phase plane ==
@@ -137,7 +137,7 @@ p.legend()
 p.grid()
 p.xlim(-xmax, xmax)
 p.ylim(-ymax, ymax)
-f2.savefig(functionName + '_y1_and_y2_field.png')
+f2.savefig('plots/' + functionName + '_y1_and_y2_field.png')
 
 print 'Plotting..'
 p.show()
