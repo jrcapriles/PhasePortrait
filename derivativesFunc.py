@@ -5,6 +5,7 @@ Created on Tue Feb  4 11:43:55 2014
 @author: joser
 """
 from numpy import *
+import math
 
 
 # Definition of parameters 
@@ -36,27 +37,27 @@ b = 1.5
 mu_mag = 0.5    #0.0, 0.5, 2.0
 lamb = 0.1  #0.1, 1.0
 k_mag = 0.5     #0.0, 0.5, 2.0
-r_mag = 0.0     #0.0, 0.5
+r_mag = 0.5     #0.0, 0.5
 g = 9.8
 #================== Simple Harmonic Oscilator ==================
 k = 1.5
 m = 2
 #================== Hyperbolic Equilibrium point ==================
-alpha_hyper = 2    # alpha 2., -2.
+alpha_hyper = -2.    # alpha 2., -2.
 #=========================================================
 
 
-# Definition of the equations:
 
 # Definition of the first derivative:
 
 #=====================Playing Violin =======================
 def dX_dt_Violin(X,t=0):
-    norm_v =(X[1]-vb)/v
     """ Return the Your Choise derivative """
+    seda = (X[1]-vb)/v
+    fb = ((1+alpha_vio*(seda-sign(seda)))**2)*sign(seda)*mu_dyn*N
+    fk = k*(X[0]-xc)
     return array([X[1],
-                  (1/m_vio)*((1+alpha_vio*(norm_v-sign(norm_v))**2)*sign(norm_v)*mu_dyn*N - 
-                  k_vio*(X[0]-xc))])
+                  (1/m_vio)*(fb-fk)])
 
 #================== Hyperbolic Equilibrium point ==================
 def dX_dt_Hyperbolic(X,t=0):
@@ -73,8 +74,9 @@ def dX_dt_Simple(X,t=0):
 #================== Magnetic Suspension ==================
 def dX_dt_Magnetic(X,t=0):
     """ Return the Magnetic Suspension derivative """
+    i = -k_mag*(r_mag-X[0])
     return array([X[1],
-                  (1/m)*(-b*X[1] - m*g + 0.5*((lamb*mu_mag*(-k_mag*(r_mag-X[0]))**2)/(1+mu_mag*X[0])**2))])
+                 (1/m)*(-b*X[1] - m*g + ((lamb*mu_mag*i**2)/(2*(1+mu_mag*X[0])**2)))])
 
 #================== Duffing oscillator ===================
 def dX_dt_Duffing(X,t=0):
@@ -95,9 +97,12 @@ def dX_dt_Vanderpol(X,t=0):
 #================== Hyperbolic Equilibrium point ==================
 def d2X_dt2_Violin(X, t=0):
     """ Return the Jacobian matrix evaluated in X. """
+    seda = (X[1]-vb)/v
     return array([[0, 1],
-                  [-k_vio, ((mu_dyn*N)/m_vio)*(sign((X[1]-vb)/v))*(2*alpha_vio*(1/v)-1 + 
-                  2*(alpha_vio*((X[1]-vb)/v-sign((X[1]-vb)/v))))]])  
+                  [-k_vio/m, 
+                   (1/m_vio)*((2*alpha_vio*(1/v))+
+                   (alpha_vio**2*((2*X[1]-2*vb)/v**2)-
+                   2*sign(seda))*sign(seda)*mu_dyn*N)]])  
                   
 #================== Hyperbolic Equilibrium point ==================
 def d2X_dt2_Hyperbolic(X, t=0):
@@ -115,8 +120,10 @@ def d2X_dt2_Simple(X, t=0):
 #================== Magnetic Suspension ==================
 def d2X_dt2_Magnetic(X, t=0):
     """ Return the Jacobian matrix evaluated in X. """
+    den = 2*m*(1+mu_mag*X[0])**2
+    num = lamb*mu_mag*(-k_mag*(r-X[0]))**2
     return array([[0, 1],
-                  [((lamb*mu_mag*((-k_mag)**2))/(2*m))*((-2*r_mag + 2*X[0])*(1+2*mu_mag*X[0]+X[0]**2)-((r_mag**2-2*r_mag*X[0]+X[0]**2)*(2*mu_mag+2*X[0]))),  -b/m]])  
+                  [((lamb*mu_mag*k_mag**2*(-2*r_mag+2*X[0])*den - num*(2*m*(2*mu_mag+2*X[0])))/(2*m*(1+mu_mag*X[0])**2)**2),-b/m]])  
 #========================================================
 
 #================== Duffing oscillator ==================

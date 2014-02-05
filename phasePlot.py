@@ -17,11 +17,11 @@ import init as init
 FuntionNameList = ["Hyperbolic", "Simple", "Magnetic", "Duffing", "Vanderpol", "Violin"]
 
 #Select the function that you want to work with
-functionName = "Violin"
+functionName = "Vanderpol"
 
 dxfunction, dx2function, dxic = init.init(functionName)
 
-print 'Init values of violin (%.3f, %.3f) (%.3f, %.3f)' % (dxic[0][0], dxic[0][1], dxic[1][0], dxic[1][1])
+print 'Init values (%.3f, %.3f) (%.3f, %.3f)' % (dxic[0][0], dxic[0][1], dxic[1][0], dxic[1][1])
 # load initials conditions to test
 X0 = array([1, 1])                      
 
@@ -73,8 +73,8 @@ y1, y2 = X.T
 
 #plot time response of the system
 f1 = p.figure()
-p.plot(t, y1, 'r-', label='y1')
-p.plot(t, y2  , 'b-', label='y2')
+p.plot(t, y1, 'r-', label='y1(t)')
+p.plot(t, y2  , 'b-', label='y2(t)')
 p.grid()
 p.legend(loc='best')
 p.xlabel('time')
@@ -96,7 +96,7 @@ f2 = p.figure()
 for v, col in zip(values, vcolors): 
     X0 = v * dxic[1]                               # starting point
     X = integrate.odeint( dxfunction, X0, t)                 # we don't need infodict here
-    p.plot( X[:,0], X[:,1], lw=3.5*v, color=col, label='X0=(%.3f, %.3f)' % ( X0[0], X0[1]) )
+    p.plot( X[:,0], X[:,1], lw=3.5*v, color=col, label='Xo=(%.3f, %.3f)' % ( X0[0], X0[1]) )
     #print 'X0=(%2.f,%2.f) => I ~ %.1f |delta = %.3G %%' % (X0[0], X0[1], I_mean, delta) Add feedback
 
 # define a grid and compute direction at each point

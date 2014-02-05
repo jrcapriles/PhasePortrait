@@ -4,7 +4,7 @@ Created on Tue Feb  4 14:56:05 2014
 
 @author: joser
 """
-from numpy import *
+
 import derivativesFunc as dx
 import initialConditions as ic
 
