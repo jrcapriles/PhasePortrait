@@ -14,13 +14,14 @@ import pylab as p
 import init as init
 
 #List of the function names availables
-FuntionNameList = ["Hyperbolic", "Simple", "Magnetic", "Duffing", "Vanderpol"]
+FuntionNameList = ["Hyperbolic", "Simple", "Magnetic", "Duffing", "Vanderpol", "Violin"]
 
 #Select the function that you want to work with
-functionName = "Simple"
+functionName = "Duffing"
 
 dxfunction, dx2function, dxic = init.init(functionName)
 
+print 'Init values of violin (%.3f, %.3f) (%.3f, %.3f)' % (dxic[0][0], dxic[0][1], dxic[1][0], dxic[1][1])
 # load initials conditions to test
 X0 = array([1, 1])                      
 
@@ -29,9 +30,9 @@ X0 = array([1, 1])
 
 #Test initial condition (should be true)
 def testIC( fun, *args ):
-    all(fun(args[0]) == zeros(2) ) and all(fun(args[1]) == zeros(2) )
-    print 'IC test passed!'
-
+    result = all(fun(args[0]) == zeros(2) ) and all(fun(args[1]) == zeros(2) )
+    if not result: 
+        print 'Error, equilibrium point should be equal to zero! Check initial conditions!'
 
 testIC(dxfunction,dxic[0],dxic[1])
 
@@ -41,11 +42,12 @@ testIC(dxfunction,dxic[0],dxic[1])
 
 def evalJacobian( fun, *args ):
     A = fun(args[0])
-    print 'Jacobian evaluation test passed!'
+    print 'Computing Jacobians..'
     return A
     
 #Call eval Jacobian function
 A_f1 = evalJacobian(dx2function,dxic[1])  
+
 # whose eigenvalues are:
 lambda1, lambda2 = linalg.eigvals(A_f1)
 T_f1 = 2*pi/abs(lambda1)               
@@ -60,7 +62,7 @@ t = linspace(0, 15,  1000)              # time
 
 def integrateFucn( fun, *args ):
     X, infodict = integrate.odeint(fun, args[0], args[1], full_output=True)
-    print 'Integrate function test passed!'
+    print 'Solving differential equations..'
     return X, infodict
 
 
@@ -78,7 +80,7 @@ p.legend(loc='best')
 p.xlabel('time')
 p.ylabel('outputs')
 p.title('Evolution of y1 and y2')
-f1.savefig('y1_and_y2_1.png')
+f1.savefig(functionName + '_y1_and_y2_outputs.png')
  
  
 # == Plotting direction fields and trajectories in the phase plane ==
@@ -110,7 +112,7 @@ X1 , Y1  = meshgrid(x, y)                       # create a grid
 
 def computeGrowth( fun, *args ):
     DX1, DY1 = fun([args[0], args[1]])          # compute growth rate on the gridt
-    print 'Computed Growth test passed!'
+    print 'Computing growing rate..'
     return DX1, DY1
 
 
@@ -135,6 +137,8 @@ p.legend()
 p.grid()
 p.xlim(-xmax, xmax)
 p.ylim(-ymax, ymax)
-f2.savefig('y1_and_y2_2.png')
+f2.savefig(functionName + '_y1_and_y2_field.png')
+
+print 'Plotting..'
 p.show()
 

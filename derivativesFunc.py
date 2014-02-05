@@ -8,6 +8,19 @@ from numpy import *
 
 
 # Definition of parameters 
+#=====================Playing Violin =======================
+l=0.32     #centimeters
+epse_vio = 0.65
+A = 440
+mu_dyn =1.2
+mu_sta = 1.5
+alpha_vio = mu_sta/mu_dyn - 1
+vb = 0.012 
+N = 3/mu_dyn
+m_vio = 0.02
+xc = 0.003
+v = 0.03 
+k_vio = 45;
 
 #================== Vanderpol oscillator ==================
 mu = 1.
@@ -20,7 +33,7 @@ alpha = -0.1   #alpha = -0.1, 0.1, 0.5
 #================== Magnetic Suspension ==================
 m = 2.5
 b = 1.5
-mu_mag = 0.0    #0.0, 0.5, 2.0
+mu_mag = 0.5    #0.0, 0.5, 2.0
 lamb = 0.1  #0.1, 1.0
 k_mag = 0.5     #0.0, 0.5, 2.0
 r_mag = 0.0     #0.0, 0.5
@@ -36,34 +49,38 @@ alpha_hyper = 2    # alpha 2., -2.
 # Definition of the equations:
 
 # Definition of the first derivative:
-    
+
+#=====================Playing Violin =======================
+def dX_dt_Violin(X,t=0):
+    norm_v =(X[1]-vb)/v
+    """ Return the Your Choise derivative """
+    return array([X[1],
+                  (1/m_vio)*((1+alpha_vio*(norm_v-sign(norm_v))**2)*sign(norm_v)*mu_dyn*N - 
+                  k_vio*(X[0]-xc))])
+
 #================== Hyperbolic Equilibrium point ==================
 def dX_dt_Hyperbolic(X,t=0):
     """ Return the Your Choise derivative """
     return array([X[1],
                   -X[0]-X[0]**3-alpha_hyper*X[1]])
-#=========================================================
 
 #================== Your Choise ==================
 def dX_dt_Simple(X,t=0):
     """ Return the Your Choise derivative """
     return array([X[1],
                   -k*X[0]/m])
-#=========================================================
 
 #================== Magnetic Suspension ==================
 def dX_dt_Magnetic(X,t=0):
     """ Return the Magnetic Suspension derivative """
     return array([X[1],
                   (1/m)*(-b*X[1] - m*g + 0.5*((lamb*mu_mag*(-k_mag*(r_mag-X[0]))**2)/(1+mu_mag*X[0])**2))])
-#=========================================================
 
 #================== Duffing oscillator ===================
 def dX_dt_Duffing(X,t=0):
     """ Return the Duffing oscillator derivative """
     return array([X[1],
                   -epsi*X[1] -X[0]*(beta*X[0]**2+alpha)])
-#=========================================================
 
 #================== Vanderpol oscillator =================
 def dX_dt_Vanderpol(X,t=0):
@@ -76,11 +93,17 @@ def dX_dt_Vanderpol(X,t=0):
 # Definition of the Jacobian matrix:
 
 #================== Hyperbolic Equilibrium point ==================
+def d2X_dt2_Violin(X, t=0):
+    """ Return the Jacobian matrix evaluated in X. """
+    return array([[0, 1],
+                  [-k_vio, ((mu_dyn*N)/m_vio)*(sign((X[1]-vb)/v))*(2*alpha_vio*(1/v)-1 + 
+                  2*(alpha_vio*((X[1]-vb)/v-sign((X[1]-vb)/v))))]])  
+                  
+#================== Hyperbolic Equilibrium point ==================
 def d2X_dt2_Hyperbolic(X, t=0):
     """ Return the Jacobian matrix evaluated in X. """
     return array([[0, 1],
                   [-1-3*X[0]**2, -alpha_hyper]])  
-#========================================================
 
 #================== Simple Harmonic Oscillator ==================
 def d2X_dt2_Simple(X, t=0):

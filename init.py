@@ -14,19 +14,22 @@ dxFunSelect = {"Hyperbolic":dx.dX_dt_Hyperbolic,
                "Simple":dx.dX_dt_Simple, 
                "Magnetic":dx.dX_dt_Magnetic, 
                "Duffing":dx.dX_dt_Duffing,
-               "Vanderpol":dx.dX_dt_Vanderpol}
+               "Vanderpol":dx.dX_dt_Vanderpol,
+               "Violin":dx.dX_dt_Violin}
                  
 dx2FunSelect = {"Hyperbolic":dx.d2X_dt2_Hyperbolic, 
                 "Simple":dx.d2X_dt2_Simple, 
                 "Magnetic":dx.d2X_dt2_Magnetic, 
                 "Duffing":dx.d2X_dt2_Duffing,
-                "Vanderpol":dx.d2X_dt2_Vanderpol}
+                "Vanderpol":dx.d2X_dt2_Vanderpol,
+                "Violin":dx.d2X_dt2_Violin}
 
 ICFunSelect = {"Hyperbolic": [ic.X_f0_Hyperbolic, ic.X_f1_Hyperbolic], 
                "Simple": [ic.X_f0_Simple, ic.X_f1_Simple], 
                "Magnetic": [ic.X_f0_Magnetic, ic.X_f1_Magnetic], 
                "Duffing": [ic.X_f0_Duffing, ic.X_f1_Duffing],
-               "Vanderpol":[ic.X_f0_Vanderpol, ic.X_f1_Vanderpol]}
+               "Vanderpol":[ic.X_f0_Vanderpol, ic.X_f1_Vanderpol],
+               "Violin":[ic.X_f0_Violin, ic.X_f1_Violin]}
                  
                  
 def init(funName):
