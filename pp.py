@@ -32,10 +32,13 @@ def computeGrowth( fun, *args ):
     return DX1, DY1
 
     
-def phasePlane(functionName):
+def phasePlane(functionName, IC = None):
     
     dxfunction, dx2function, dxic = init.init(functionName)
-
+    print dxic
+    if (IC is not None):
+        dxic = IC
+    
     X0 = array([1, 1])                      
 
     testIC(dxfunction,dxic[0],dxic[1])
