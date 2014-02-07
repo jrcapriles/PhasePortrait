@@ -66,7 +66,7 @@ class PhasePortraitGUI(Tkinter.Tk):
         self.numPlots = Tkinter.StringVar()
         self.entry = Tkinter.Entry(self,textvariable=self.numPlots)
         self.entry.grid(column=1,row=9)
-        self.numPlots.set("5.0")
+        self.numPlots.set("5")
         
         #Entry variables for initial conditions
         self.X0 = Tkinter.StringVar()
@@ -139,7 +139,7 @@ class PhasePortraitGUI(Tkinter.Tk):
         #Function to call phase plane plot function
         IC0=array([float(self.X0.get()), float(self.Y0.get())])
         IC1=array([float(self.X1.get()), float(self.Y1.get())])
-        dim = [float(self.Xmin.get()),float(self.Ymin.get()),float(self.Xmax.get()),float(self.Ymin.get())]
+        dim = [float(self.Xmin.get()),float(self.Ymin.get()),float(self.Xmax.get()),float(self.Ymax.get())]
         
         print phasePlane(self.funcVar.get(),[IC0,IC1],dim,int(self.numPlots.get()))
         

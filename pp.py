@@ -29,7 +29,7 @@ def integrateFucn( fun, *args ):
 def computeGrowth( fun, *args ):
     DX1, DY1 = fun([args[0], args[1]])          # compute growth rate on the gridt
     print 'Computing growing rate..'
-    return -DX1, -DY1
+    return DX1, DY1
 
 
     
@@ -44,7 +44,6 @@ def phasePlane(functionName, IC = None, dim = None, numXo = None):
 
     testIC(dxfunction,dxic[0],dxic[1])
     
-    A_f0 = evalJacobian(dx2function,dxic[0])
     A_f1 = evalJacobian(dx2function,dxic[1])  
 
     lambda1, lambda2 = linalg.eigvals(A_f1)
@@ -69,14 +68,17 @@ def phasePlane(functionName, IC = None, dim = None, numXo = None):
     if (numXo is None):
         numXo = 5
 
+    # initial conditions points
     xvalues  = linspace(dxic[0][0], dxic[1][0], numXo)                          # position of X0 between X_f0 and X_f1
     yvalues  = linspace(dxic[0][1], dxic[1][1], numXo)                          # position of X0 between X_f0 and X_f1
-        
+    
+    # set of colors used in each line
     vcolors = p.cm.autumn_r(linspace(0.3, 0.9, len(xvalues)))  # colors for each trajectory
 
     #Phase plane of the system
     f2 = p.figure()
     t = linspace(0, 40,  1000)
+    
     for xv, yv, col in zip(xvalues, yvalues, vcolors): 
         X0 = array([xv,yv])
         X = integrate.odeint( dxfunction, X0, t)                 # we don't need infodict here
@@ -85,17 +87,23 @@ def phasePlane(functionName, IC = None, dim = None, numXo = None):
     if (dim is not None):
         #Using dimension from GUI or function arguments
         xmin = dim[0]  
-        xmax = dim[1]
-        ymin = dim[2]
+        ymin = dim[1]
+        xmax = dim[2]
         ymax = dim[3]
 
     #Set the number of points to be used
     points = int((abs(max(dim))+abs(min(dim)))/0.2)
     if points < 30:
-        points =30                     
+        points = 30                     
 
-    x = linspace(-xmax, xmax, points)
-    y = linspace(-ymax, ymax, points)
+    #x = linspace(-xmax, xmax, points)
+    #y = linspace(-ymax, ymax, points)
+    
+    #ADD A CHECK IF THE XMIN IS GREATER THAN XMAX (SAME FOR Y)
+    
+    print  'xmin = %3.f  xmax = %3.f  ymin = %3.f  ymax = %3.f ' % (xmin,xmax,ymin, ymax)    
+    x = linspace(xmin, xmax, points)
+    y = linspace(ymin, ymax, points)
 
     X1 , Y1  = meshgrid(x, y)                       # create a grid
     DX1, DY1 = computeGrowth(dxfunction,X1,Y1)      # compute growth rate on the gridt
@@ -111,8 +119,8 @@ def phasePlane(functionName, IC = None, dim = None, numXo = None):
     p.ylabel('x dot')
     p.legend()
     p.grid()
-    p.xlim(-xmax, xmax)
-    p.ylim(-ymax, ymax)
+    p.xlim(xmin, xmax)
+    p.ylim(ymin, ymax)
     f2.savefig('plots/' + functionName + '_y1_and_y2_field.png')
 
     p.show()
