@@ -59,6 +59,15 @@ class PhasePortraitGUI(Tkinter.Tk):
         label = Tkinter.Label(self, text = ")")
         label.grid(column=4,row=8)
                 
+        #Labels for num of plots
+        label = Tkinter.Label(self, text = "Num Lines:")
+        label.grid(column=0,row=9)
+        #Entry variables for num of plots
+        self.numPlots = Tkinter.StringVar()
+        self.entry = Tkinter.Entry(self,textvariable=self.numPlots)
+        self.entry.grid(column=1,row=9)
+        self.numPlots.set("5.0")
+        
         #Entry variables for initial conditions
         self.X0 = Tkinter.StringVar()
         self.entry = Tkinter.Entry(self,textvariable=self.X0)
@@ -131,7 +140,8 @@ class PhasePortraitGUI(Tkinter.Tk):
         IC0=array([float(self.X0.get()), float(self.Y0.get())])
         IC1=array([float(self.X1.get()), float(self.Y1.get())])
         dim = [float(self.Xmin.get()),float(self.Ymin.get()),float(self.Xmax.get()),float(self.Ymin.get())]
-        print phasePlane(self.funcVar.get(),[IC0,IC1],dim)
+        
+        print phasePlane(self.funcVar.get(),[IC0,IC1],dim,int(self.numPlots.get()))
         
 
 if __name__ == "__main__":

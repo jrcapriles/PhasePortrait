@@ -55,11 +55,10 @@ dd= 3.0
 def fb_Violin(seda):
     print seda
     if seda.all>0.:
-        fb = (1+alpha_vio*(seda**2-2*seda+1))*mu_dyn*N  #1+alpha_vio*(seda - 1)**2
-    elif seda.all<0:
-        fb = (1+alpha_vio*(seda**2+2*seda+1))*(-1)*mu_dyn*N #1-alpha_vio*(seda + 1)**2
+        fb = (1+alpha_vio*(seda-1)**2)*mu_dyn*N  #1+alpha_vio*(seda - 1)**2
     else:
-        fb = 0
+        fb = -(1+alpha_vio*(seda+1)**2)*mu_dyn*N #1-alpha_vio*(seda + 1)**2
+
     return fb
 
 #=====================Playing Violin =======================

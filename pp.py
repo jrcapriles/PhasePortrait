@@ -83,16 +83,13 @@ def phasePlane(functionName, IC = None, dim = None, numXo = None):
         p.plot( X[:,0], X[:,1], lw=3.5, color=col, label='Xo=(%.3f, %.3f)' % ( X0[0], X0[1]) )
 
     if (dim is not None):
-        print "TRUE"
+        #Using dimension from GUI or function arguments
         xmin = dim[0]  
         xmax = dim[1]
         ymin = dim[2]
         ymax = dim[3]
 
-      
-    print max(dim)
-    print min(dim)
-    
+    #Set the number of points to be used
     points = int((abs(max(dim))+abs(min(dim)))/0.2)
     if points < 30:
         points =30                     
