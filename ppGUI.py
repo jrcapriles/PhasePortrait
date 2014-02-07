@@ -68,6 +68,15 @@ class PhasePortraitGUI(Tkinter.Tk):
         self.entry.grid(column=1,row=9)
         self.numPlots.set("5")
         
+         #Labels for ode solver
+        label = Tkinter.Label(self, text = "ODE Solver:")
+        label.grid(column=0,row=10)
+        self.ODESolver = Tkinter.StringVar()
+        self.ODESolver.set('5')
+        self.ODEchoices = ['Default', 'vode', 'zvode','lsoda', 'dopri5','dop853'] #'Hyperbolic'
+        #Drop down menu to select ODE Solver
+        ODESolverOp = Tkinter.OptionMenu(self, self.ODESolver, *self.ODEchoices)
+        ODESolverOp.grid(column = 1, row =10)
         #Entry variables for initial conditions
         self.X0 = Tkinter.StringVar()
         self.entry = Tkinter.Entry(self,textvariable=self.X0)
@@ -141,7 +150,7 @@ class PhasePortraitGUI(Tkinter.Tk):
         IC1=array([float(self.X1.get()), float(self.Y1.get())])
         dim = [float(self.Xmin.get()),float(self.Ymin.get()),float(self.Xmax.get()),float(self.Ymax.get())]
         
-        print phasePlane(self.funcVar.get(),[IC0,IC1],dim,int(self.numPlots.get()))
+        print phasePlane(self.funcVar.get(),[IC0,IC1],dim,int(self.numPlots.get()),self.ODESolver.get())
         
 
 if __name__ == "__main__":

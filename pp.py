@@ -22,6 +22,7 @@ def evalJacobian( fun, *args ):
     return A
 
 def integrateFucn( fun, *args ):
+    print args[2]
     X, infodict = integrate.odeint(fun, args[0], args[1], full_output=True)
     print 'Solving differential equations..'
     return X, infodict   
@@ -33,7 +34,7 @@ def computeGrowth( fun, *args ):
 
 
     
-def phasePlane(functionName, IC = None, dim = None, numXo = None):
+def phasePlane(functionName, IC = None, dim = None, numXo = None, ODESolver = 'Default'):
     
     dxfunction, dx2function, dxic = init.init(functionName)
     
@@ -49,7 +50,7 @@ def phasePlane(functionName, IC = None, dim = None, numXo = None):
     lambda1, lambda2 = linalg.eigvals(A_f1)
     t = linspace(0, 15,  1000)              # time
     
-    X, infodict = integrateFucn(dxfunction, X0, t)
+    X, infodict = integrateFucn(dxfunction, X0, t, ODESolver)
     infodict['message']                     # >>> 'Integration successful.'
  
     y1, y2 = X.T
