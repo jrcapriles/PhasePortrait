@@ -20,8 +20,8 @@ vb = 0.012
 N = 3/mu_dyn
 m_vio = 0.02
 xc = 0.003
-v = 0.03 
-k_vio = 45;
+v = 1 
+k_vio = 5;
 
 #================== Vanderpol oscillator ==================
 mu = 1.
@@ -32,9 +32,9 @@ epsi = 0.1     #epsi = 0.1, 2.0
 beta = 0.1     #beta = 0.1, 1.0
 alpha = -0.1   #alpha = -0.1, 0.1, 0.5
 #================== Magnetic Suspension ==================
-m = 2.5
-b = 1.5
-mu_mag = 0.5    #0.0, 0.5, 2.0
+m_mag = 2.5
+b_mag = 1.5
+mu_mag = 2.0    #0.0, 0.5, 2.0
 lamb = 0.1  #0.1, 1.0
 k_mag = 0.5     #0.0, 0.5, 2.0
 r_mag = 0.5     #0.0, 0.5
@@ -47,17 +47,31 @@ alpha_hyper = -2.    # alpha 2., -2.
 #=========================================================
 
 
-
+bb= 2.1
+cc= 2.0
+dd= 3.0
 # Definition of the first derivative:
+
+def fb_Violin(seda):
+    print seda
+    if seda.all>0.:
+        fb = (1+alpha_vio*(seda**2-2*seda+1))*mu_dyn*N  #1+alpha_vio*(seda - 1)**2
+    elif seda.all<0:
+        fb = (1+alpha_vio*(seda**2+2*seda+1))*(-1)*mu_dyn*N #1-alpha_vio*(seda + 1)**2
+    else:
+        fb = 0
+    return fb
 
 #=====================Playing Violin =======================
 def dX_dt_Violin(X,t=0):
     """ Return the Your Choise derivative """
     seda = (X[1]-vb)/v
-    fb = ((1+alpha_vio*(seda-sign(seda)))**2)*sign(seda)*mu_dyn*N
-    fk = k*(X[0]-xc)
+    #fb = ((1+alpha_vio*(seda-sign(seda)))**2)*sign(seda)*mu_dyn*N
+    #fk = k*(X[0]-xc)
+    fb = fb_Violin(seda)
+    fk = k_vio*(X[0]-xc)
     return array([X[1],
-                  (1/m_vio)*(fb-fk)])
+                  (1/m_vio)*(fb-fk)]) #-(1/m_vio)*(fb_Violin(X[1])+k*(X[0]-xc))])
 
 #================== Hyperbolic Equilibrium point ==================
 def dX_dt_Hyperbolic(X,t=0):
@@ -74,9 +88,9 @@ def dX_dt_Simple(X,t=0):
 #================== Magnetic Suspension ==================
 def dX_dt_Magnetic(X,t=0):
     """ Return the Magnetic Suspension derivative """
-    i = -k_mag*(r_mag-X[0])
+    coef2 = (lamb*mu_mag*k_mag**2)/(2*m_mag)
     return array([X[1],
-                 (1/m)*(-b*X[1] - m*g + ((lamb*mu_mag*i**2)/(2*(1+mu_mag*X[0])**2)))])
+                -g + coef2*((X[1]**2-2*X[1]*r_mag+r**2)/(1+2*mu_mag*X[1]+(mu_mag*X[1])**2))-(b_mag*X[1]/m_mag)])
 
 #================== Duffing oscillator ===================
 def dX_dt_Duffing(X,t=0):
@@ -98,11 +112,12 @@ def dX_dt_Vanderpol(X,t=0):
 def d2X_dt2_Violin(X, t=0):
     """ Return the Jacobian matrix evaluated in X. """
     seda = (X[1]-vb)/v
+    fb = fb_Violin(seda)
+    fk = k_vio*(X[0]-xc)
+    
     return array([[0, 1],
-                  [-k_vio/m, 
-                   (1/m_vio)*((2*alpha_vio*(1/v))+
-                   (alpha_vio**2*((2*X[1]-2*vb)/v**2)-
-                   2*sign(seda))*sign(seda)*mu_dyn*N)]])  
+                  [-1,1]])#[-k_vio/m_vio, -(2/m_vio)*(cc-bb)]])
+                  #(2*alpha_vio/(v**2))*(X[1]-vb-v)]])  
                   
 #================== Hyperbolic Equilibrium point ==================
 def d2X_dt2_Hyperbolic(X, t=0):
@@ -120,10 +135,11 @@ def d2X_dt2_Simple(X, t=0):
 #================== Magnetic Suspension ==================
 def d2X_dt2_Magnetic(X, t=0):
     """ Return the Jacobian matrix evaluated in X. """
-    den = 2*m*(1+mu_mag*X[0])**2
-    num = lamb*mu_mag*(-k_mag*(r-X[0]))**2
+    coef2 = (lamb*mu_mag*k_mag**2)/(2*m_mag)    
+    den = (1+2*mu_mag*X[1]+(mu_mag*X[1])**2)
+    num = (X[1]**2-2*X[1]*r_mag+r**2)
     return array([[0, 1],
-                  [((lamb*mu_mag*k_mag**2*(-2*r_mag+2*X[0])*den - num*(2*m*(2*mu_mag+2*X[0])))/(2*m*(1+mu_mag*X[0])**2)**2),-b/m]])  
+                  [(den*(2*(X[0]-r_mag))-num*(2*mu_mag+(mu_mag*X[0])**2))/(den**2),-b_mag/m_mag]])  
 #========================================================
 
 #================== Duffing oscillator ==================
