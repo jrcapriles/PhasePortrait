@@ -22,10 +22,32 @@ def evalJacobian( fun, *args ):
     return A
 
 def integrateFucn( fun, *args ):
-    print args[2]
-    X, infodict = integrate.odeint(fun, args[0], args[1], full_output=True)
-    print 'Solving differential equations..'
-    return X, infodict   
+    
+    if args[2]=='Default': 
+        X, infodict = integrate.odeint(fun, args[0], args[1], full_output=True)
+        print 'Solving differential equations..'
+        print len(X)
+        return X, infodict   
+    else:
+        #solver = integrate.ode(fun, jac).set_integrator('zvode', method='bdf', with_jacobian=True)
+        solver = integrate.ode(fun)
+        if args[2] == 'vode' or args[2] == 'zvode':
+            solver.set_integrator(args[2], method='adams')  #‘bdf’
+        else:
+            solver.set_integrator(args[2])
+        
+        #set initial condition (Xo, t=0.0)
+        solver.set_initial_value(args[0],args[1][0])
+        i=0
+        sol =[]
+        while solver.successful() and solver.t < args[1][-1]:
+            solver.integrate(args[1][i])
+            sol.append(solver.y)
+            i+=1
+        print 'Solver finished OK? : %r' % (solver.successful())
+        sol = array(sol)
+        return sol
+        
 
 def computeGrowth( fun, *args ):
     DX1, DY1 = fun([args[0], args[1]])          # compute growth rate on the gridt
@@ -34,13 +56,23 @@ def computeGrowth( fun, *args ):
 
 
     
-def phasePlane(functionName, IC = None, dim = None, numXo = None, ODESolver = 'Default'):
+def phasePlane(functionName, IC = None, dim = None, numXo = None, ODESolver = 'Default', simSpecs = None):
     
     dxfunction, dx2function, dxic = init.init(functionName)
     
     if (IC is not None):
         dxic = IC
    
+    if (simSpecs is not None):
+        tInit = simSpecs[0]
+        tFinal = simSpecs[1]
+        numT = simSpecs[2]
+    else:
+        tInit = 0.0
+        tFinal = 15
+        numT = 1000
+    
+    #similiar to step response
     X0 = array([1, 1])                      
 
     testIC(dxfunction,dxic[0],dxic[1])
@@ -48,11 +80,13 @@ def phasePlane(functionName, IC = None, dim = None, numXo = None, ODESolver = 'D
     A_f1 = evalJacobian(dx2function,dxic[1])  
 
     lambda1, lambda2 = linalg.eigvals(A_f1)
-    t = linspace(0, 15,  1000)              # time
+       
+        
+    t = linspace(tInit, tFinal,  numT)              # time
     
     X, infodict = integrateFucn(dxfunction, X0, t, ODESolver)
-    infodict['message']                     # >>> 'Integration successful.'
- 
+#    infodict['message']                     # >>> 'Integration successful.'
+    print len(X)
     y1, y2 = X.T
 
     #Time response of the system
@@ -78,7 +112,7 @@ def phasePlane(functionName, IC = None, dim = None, numXo = None, ODESolver = 'D
 
     #Phase plane of the system
     f2 = p.figure()
-    t = linspace(0, 40,  1000)
+    t = linspace(tInit, tFinal,  numT)
     
     for xv, yv, col in zip(xvalues, yvalues, vcolors): 
         X0 = array([xv,yv])
