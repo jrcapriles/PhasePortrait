@@ -9,6 +9,7 @@ from numpy import *
 import pylab as p
 import init as init
 from scipy import integrate
+#from matplotlib.pyplot import *
 
 #Test initial condition (should be true)
 def testIC( fun, *args ):
@@ -21,6 +22,8 @@ def evalJacobian( fun, *args ):
     print 'Computing Jacobians..'
     return A
 
+
+
 def integrateFucn( fun, *args ):
     
     if args[2]=='Default': 
@@ -29,24 +32,31 @@ def integrateFucn( fun, *args ):
         print len(X)
         return X, infodict   
     else:
-        #solver = integrate.ode(fun, jac).set_integrator('zvode', method='bdf', with_jacobian=True)
-        solver = integrate.ode(fun)
-        if args[2] == 'vode' or args[2] == 'zvode':
-            solver.set_integrator(args[2], method='adams')  #‘bdf’
-        else:
-            solver.set_integrator(args[2])
         
-        #set initial condition (Xo, t=0.0)
-        solver.set_initial_value(args[0],args[1][0])
+        solver = integrate.ode(fun).set_integrator(args[2], method= 'bdf').set_initial_value(args[0],args[1][0])
         i=0
-        sol =[]
+        Y = []
         while solver.successful() and solver.t < args[1][-1]:
+            print 'time'
+            print args[1][i]
             solver.integrate(args[1][i])
-            sol.append(solver.y)
+            Y.append(solver.y)
             i+=1
+#            
         print 'Solver finished OK? : %r' % (solver.successful())
-        sol = array(sol)
-        return sol
+        return Y
+        #Check why it fails....
+        
+#time
+#0.0
+#time
+#0.015015015015
+# ZVODE--  ISTATE (=I1) .gt. 1 but ZVODE not initialized      
+#      In above message,  I1 =         2
+#/usr/lib/python2.7/dist-packages/scipy/integrate/ode.py:689: UserWarning: zvode: Illegal input detected. (See printed message.)
+#  self.messages.get(istate, 'Unexpected istate=%s'%istate))
+#Solver finished OK? : False
+        
         
 
 def computeGrowth( fun, *args ):
@@ -86,7 +96,7 @@ def phasePlane(functionName, IC = None, dim = None, numXo = None, ODESolver = 'D
     
     X, infodict = integrateFucn(dxfunction, X0, t, ODESolver)
 #    infodict['message']                     # >>> 'Integration successful.'
-    print len(X)
+
     y1, y2 = X.T
 
     #Time response of the system
@@ -112,13 +122,22 @@ def phasePlane(functionName, IC = None, dim = None, numXo = None, ODESolver = 'D
 
     #Phase plane of the system
     f2 = p.figure()
+    f21 = p.subplot(111)
+
     t = linspace(tInit, tFinal,  numT)
     
     for xv, yv, col in zip(xvalues, yvalues, vcolors): 
         X0 = array([xv,yv])
         X = integrate.odeint( dxfunction, X0, t)                 # we don't need infodict here
-        p.plot( X[:,0], X[:,1], lw=3.5, color=col, label='Xo=(%.3f, %.3f)' % ( X0[0], X0[1]) )
+        f21.plot( X[:,0], X[:,1], lw=3.5, color=col, label='Xo=(%.3f, %.3f)' % ( X0[0], X0[1]) )
 
+    # Shink current axis by 10%
+    box = f21.get_position()
+    f21.set_position([box.x0, box.y0, box.width * 0.9, box.height])
+
+    # Put a legend to the right of the current axis
+    f21.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+  
     if (dim is not None):
         #Using dimension from GUI or function arguments
         xmin = dim[0]  
@@ -131,12 +150,6 @@ def phasePlane(functionName, IC = None, dim = None, numXo = None, ODESolver = 'D
     if points < 30:
         points = 30                     
 
-    #x = linspace(-xmax, xmax, points)
-    #y = linspace(-ymax, ymax, points)
-    
-    #ADD A CHECK IF THE XMIN IS GREATER THAN XMAX (SAME FOR Y)
-    
-    print  'xmin = %3.f  xmax = %3.f  ymin = %3.f  ymax = %3.f ' % (xmin,xmax,ymin, ymax)    
     x = linspace(xmin, xmax, points)
     y = linspace(ymin, ymax, points)
 
@@ -152,11 +165,10 @@ def phasePlane(functionName, IC = None, dim = None, numXo = None, ODESolver = 'D
     Q = p.quiver(X1, Y1, DX1, DY1, M, pivot='mid', cmap=p.cm.jet)
     p.xlabel('x')
     p.ylabel('x dot')
-    p.legend()
+    #p.legend()
     p.grid()
     p.xlim(xmin, xmax)
     p.ylim(ymin, ymax)
     f2.savefig('plots/' + functionName + '_y1_and_y2_field.png')
 
     p.show()
-
