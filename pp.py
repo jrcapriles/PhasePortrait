@@ -126,16 +126,18 @@ def phasePlane(functionName, IC = None, dim = None, numXo = None, ODESolver = 'D
 
     t = linspace(tInit, tFinal,  numT)
     
+    
+    
     for xv, yv, col in zip(xvalues, yvalues, vcolors): 
         X0 = array([xv,yv])
         X = integrate.odeint( dxfunction, X0, t)                 # we don't need infodict here
         f21.plot( X[:,0], X[:,1], lw=3.5, color=col, label='Xo=(%.3f, %.3f)' % ( X0[0], X0[1]) )
 
-    # Shink current axis by 10%
+        # Shink current axis by 10%
     box = f21.get_position()
     f21.set_position([box.x0, box.y0, box.width * 0.9, box.height])
 
-    # Put a legend to the right of the current axis
+        # Put a legend to the right of the current axis
     f21.legend(loc='center left', bbox_to_anchor=(1, 0.5))
   
     if (dim is not None):

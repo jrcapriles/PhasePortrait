@@ -21,7 +21,7 @@ N = 3/mu_dyn
 m_vio = 0.02
 xc = 0.003
 v = 1 
-k_vio = 5;
+k_vio = 1;
 
 #================== Vanderpol oscillator ==================
 mu = 1.
@@ -53,7 +53,7 @@ dd= 3.0
 # Definition of the first derivative:
 
 def fb_Violin(seda):
-    print seda
+#    print seda
     if seda.all>0.:
         fb = (1+alpha_vio*(seda-1)**2)*mu_dyn*N  #1+alpha_vio*(seda - 1)**2
     else:
@@ -69,8 +69,12 @@ def dX_dt_Violin(X,t=0):
     #fk = k*(X[0]-xc)
     fb = fb_Violin(seda)
     fk = k_vio*(X[0]-xc)
+    print 'Equilibrium points'
+    print X[1]
+    print (1/m_vio)*(sign(seda)*(1+alpha_vio*(seda-sign(seda))**2)*mu_dyn*N - fk)
+                  
     return array([X[1],
-                  (1/m_vio)*(fb-fk)]) #-(1/m_vio)*(fb_Violin(X[1])+k*(X[0]-xc))])
+                  (1/m_vio)*(sign(seda)*(1+alpha_vio*(seda-sign(seda))**2)*mu_dyn*N - fk)])#(fb-fk)]) #-(1/m_vio)*(fb_Violin(X[1])+k*(X[0]-xc))])
 
 #================== Hyperbolic Equilibrium point ==================
 def dX_dt_Hyperbolic(X,t=0):
@@ -115,7 +119,7 @@ def d2X_dt2_Violin(X, t=0):
     fk = k_vio*(X[0]-xc)
     
     return array([[0, 1],
-                  [-1,1]])#[-k_vio/m_vio, -(2/m_vio)*(cc-bb)]])
+                  [-k_vio/m_vio, (2*alpha_vio/(v**2))*(X[1]-vb-v)]]) #(1/m_vio)*(sign(seda)*(alpha_vio*2*(seda-sign(seda))*(1/v)))*mu_dyn*N ]])#[-k_vio/m_vio, -(2/m_vio)*(cc-bb)]])
                   #(2*alpha_vio/(v**2))*(X[1]-vb-v)]])  
                   
 #================== Hyperbolic Equilibrium point ==================
