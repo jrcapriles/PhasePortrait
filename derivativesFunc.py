@@ -65,6 +65,9 @@ def fb_Violin(seda):
 def dX_dt_Violin(X,t=0):
     """ Return the Your Choise derivative """
     seda = (X[1]-vb)/v
+    
+    if seda.all > 0.3 and seda.all < -0.3:
+        seda = 0.
     #fb = ((1+alpha_vio*(seda-sign(seda)))**2)*sign(seda)*mu_dyn*N
     #fk = k*(X[0]-xc)
     fb = fb_Violin(seda)
