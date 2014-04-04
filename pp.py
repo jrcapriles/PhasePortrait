@@ -273,7 +273,6 @@ def phasePlaneGUI(functionName, IC = None, dim = None, numXo = None, ODESolver =
     DX1 /= M                                        # Normalize each arrows
     DY1 /= M                                  
 
-
     p.title('Trajectories and direction fields')
     Q = p.quiver(X1, Y1, DX1, DY1, M, pivot='mid', cmap=p.cm.jet)
     p.xlabel('x')
@@ -282,6 +281,14 @@ def phasePlaneGUI(functionName, IC = None, dim = None, numXo = None, ODESolver =
     p.grid()
     p.xlim(xmin, xmax)
     p.ylim(ymin, ymax)
+    #p.savefig('plots/' + functionName + 'field.png')
+    #p.show()
+    
+    
+    ax = f2.gca()
+    ax.quiver(X1, Y1, DX1, DY1, M, pivot='mid', cmap=p.cm.jet)
+    
+    
 #    f2.savefig('plots/' + functionName + '_y1_and_y2_field.png')
     
     #p.show()
