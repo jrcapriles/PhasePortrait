@@ -90,6 +90,10 @@ class HomePage(tk.Frame):
         self.select = tk.Button(self, text="Select",command=lambda: self.sel(self.funcVar.get(),controller))#lambda: controller.show_screen(PageOne))
         self.select.grid(column = 2, row =3)
 
+        #This just clean the screen        
+        #self.quit = tk.Button(self, text="Quit",command=lambda: tk.Frame.destroy(parent) )
+        #self.quit.grid(column = 5, row =0)
+
     def sel(args,function,controller):
         #Switch to the coresponding page
         if function == 'Simple':
@@ -102,7 +106,8 @@ class HomePage(tk.Frame):
             controller.show_screen(4)
         elif function == 'Violin': 
             controller.show_screen(5)
-
+            
+       
 
 
 class FunctionPage(tk.Frame):
@@ -111,10 +116,10 @@ class FunctionPage(tk.Frame):
         self.grid()
         self.fun=fun
         
-        label = tk.Label(self, text="Page "+fun, font=TITLE_FONT).grid(column=1,row=0, pady=10)
+        label = tk.Label(self, text="Function: "+fun, font=TITLE_FONT).grid(column=1,row=0, pady=10)
         #label = tk.Label(self, text = "A note...").grid(column=1,row=2, pady=10)
         
-        button = tk.Button(self, text="Go to the start page", command=lambda: controller.show_screen(0)).grid(column = 3, row =14)
+        button = tk.Button(self, text="Go back!", command=lambda: controller.show_screen(0)).grid(column = 3, row =14)
         
             #============Plot Button============#
         button2 = tk.Button(self,text=u"Phase Plot Me!", command=self.plot).grid(column=3,row=15)
@@ -172,34 +177,34 @@ class FunctionPage(tk.Frame):
         self.Ymax.set("5.0")
 
         #============Num of Plots============#
-        label = tk.Label(self, text = "Num Lines:")
-        label.grid(column=0,row=10)
+        label = tk.Label(self, text = "Num Plots:")
+        label.grid(column=0,row=12)
         
         self.numPlots = tk.StringVar()
-        entry = tk.Entry(self,textvariable=self.numPlots).grid(column=1,row=10)
+        entry = tk.Entry(self,textvariable=self.numPlots).grid(column=1,row=12)
         self.numPlots.set("5")
         
         ttk.Separator(self,orient="horizontal").grid(column=0,row=1, sticky="ew", columnspan="5")
         ttk.Separator(self,orient="horizontal").grid(column=0,row=4, sticky="ew", columnspan="5")
         ttk.Separator(self,orient="horizontal").grid(column=0,row=8, sticky="ew", columnspan="5")
-        ttk.Separator(self,orient="horizontal").grid(column=0,row=12, sticky="ew", columnspan="5")
-        ttk.Separator(self,orient="horizontal").grid(column=0,row=19, sticky="ew", columnspan="5")
+        ttk.Separator(self,orient="horizontal").grid(column=0,row=13, sticky="ew", columnspan="5")
+        ttk.Separator(self,orient="horizontal").grid(column=0,row=20, sticky="ew", columnspan="5")
 #        ttk.Separator(self,orient="vertical").grid(column=1,row=1, sticky="ns", rowspan="15")
 
         #============Simulation Parameters============# 
-        label = tk.Label(self, text = "Simulation parameters:").grid(column=0,row=13)        
-        label = tk.Label(self, text = "T init:").grid(column=0,row=14)        
-        label = tk.Label(self, text = "T final:").grid(column=0,row=15)        
-        label = tk.Label(self, text = "Num points:").grid(column=0,row=16) 
+        label = tk.Label(self, text = "Simulation parameters:").grid(column=0,row=14)        
+        label = tk.Label(self, text = "T init:").grid(column=0,row=15)        
+        label = tk.Label(self, text = "T final:").grid(column=0,row=16)        
+        label = tk.Label(self, text = "Num points:").grid(column=0,row=17) 
         
         self.TInit = tk.StringVar()
-        entry = tk.Entry(self,textvariable=self.TInit).grid(column=1,row=14)
+        entry = tk.Entry(self,textvariable=self.TInit).grid(column=1,row=15)
         self.TInit.set("0.0")
         self.TFinal = tk.StringVar()
-        entry = tk.Entry(self,textvariable=self.TFinal).grid(column=1,row=15)
+        entry = tk.Entry(self,textvariable=self.TFinal).grid(column=1,row=16)
         self.TFinal.set("15.0")
         self.NumPoints = tk.StringVar()
-        entry = tk.Entry(self,textvariable=self.NumPoints).grid(column=1,row=16)
+        entry = tk.Entry(self,textvariable=self.NumPoints).grid(column=1,row=17)
         self.NumPoints.set("1000")
 
         
@@ -216,10 +221,7 @@ class FunctionPage(tk.Frame):
 
         canvas = FigureCanvasTkAgg(p, master=self)
         canvas.show()
-        canvas.get_tk_widget().grid(column=0, row= 22, columnspan=6)# side=tk.TOP, fill=tk.BOTH, expand=1)
-
-
-        ##TODO: PASAR LA FIGURA COMO RETURN VALUE DE LA FUNCION Y AGREGAR LOS SELFS EN TODOS LADOS
+        canvas.get_tk_widget().grid(column=0, row= 23, columnspan=6)# side=tk.TOP, fill=tk.BOTH, expand=1)
 
 
 if __name__ == "__main__":
