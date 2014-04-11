@@ -30,7 +30,7 @@ import sys
 
 TITLE_FONT = ("Helvetica", 18, "bold")
 
-class LieGUIApp(tk.Tk):
+class PPGUIApp(tk.Tk):
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
 
@@ -120,12 +120,12 @@ class FunctionPage(tk.Frame):
         label = tk.Label(self, text="Function: "+fun, font=TITLE_FONT).grid(column=1,row=0, pady=10)
         #label = tk.Label(self, text = "A note...").grid(column=1,row=2, pady=10)
         
-        button = tk.Button(self, text="Go back!", command=lambda: controller.show_screen(0)).grid(column = 3, row =14)
+        #============Butons============#
+        button = tk.Button(self, text="Go back!", command=lambda: controller.show_screen(0)).grid(column = 3, row =19)
         
-            #============Plot Button============#
-        button2 = tk.Button(self,text=u"Phase Plot Me!", command=self.plot).grid(column=3,row=15)
+        button2 = tk.Button(self,text=u"Phase Plot Me!", command=self.plot).grid(column=3,row=20)
     
-        button3 = tk.Button(self,text=u"Time Response!", command=self.tResponse).grid(column=3,row=16)
+        button3 = tk.Button(self,text=u"Time Response!", command=self.tResponse).grid(column=3,row=21)
         #============ODE solver============#
         label = tk.Label(self, text = "ODE Solver:").grid(column=0,row=3)
         self.ODESolver = tk.StringVar()
@@ -133,10 +133,10 @@ class FunctionPage(tk.Frame):
         self.ODEchoices = ['Default', 'vode', 'zvode','lsoda', 'dopri5','dop853'] #'Hyperbolic'
         self.ODESolverOp = tk.OptionMenu(self, self.ODESolver, *self.ODEchoices).grid(column = 1, row =3)    
     
-        #============Initial Conditions============#
-        label = tk.Label(self, text = "Initial Conditions:").grid(column=0,row=5)
-        label = tk.Label(self, text = "(X0,X1) = (").grid(column=0,row=6)
-        label = tk.Label(self, text = "(Y0,Y1) = (").grid(column=0,row=7)
+        #============PP Initial Conditions============#
+        label = tk.Label(self, text = "PP Initial Conditions:").grid(column=0,row=5)
+        label = tk.Label(self, text = "(X0,Y0) = (").grid(column=0,row=6)
+        label = tk.Label(self, text = "(X1,Y1) = (").grid(column=0,row=7)
         label = tk.Label(self, text = ",").grid(column=2,row=6)
         label = tk.Label(self, text = ",").grid(column=2,row=7)
         label = tk.Label(self, text = ")").grid(column=4,row=6)
@@ -145,67 +145,81 @@ class FunctionPage(tk.Frame):
         self.X0 = tk.StringVar()
         entry = tk.Entry(self,textvariable=self.X0).grid(column=1,row=6)
         self.X0.set("0.0")
-        self.X1 = tk.StringVar()
-        entry = tk.Entry(self,textvariable=self.X1).grid(column=3,row=6)
-        self.X1.set("1.0")
         self.Y0 = tk.StringVar()
-        entry = tk.Entry(self,textvariable=self.Y0).grid(column=1,row=7)
+        entry = tk.Entry(self,textvariable=self.Y0).grid(column=3,row=6)
         self.Y0.set("0.0")
+        self.X1 = tk.StringVar()
+        entry = tk.Entry(self,textvariable=self.X1).grid(column=1,row=7)
+        self.X1.set("1.0")
         self.Y1 = tk.StringVar()
         entry = tk.Entry(self,textvariable=self.Y1).grid(column=3,row=7)
         self.Y1.set("1.0")
+        
+        #============Time Initial Conditions============#
+        label = tk.Label(self, text = "Time Initial Conditions:").grid(column=0,row=9)
+        label = tk.Label(self, text = "(t0,t1) = (").grid(column=0,row=10)
+        label = tk.Label(self, text = ",").grid(column=2,row=10)
+        label = tk.Label(self, text = ")").grid(column=4,row=10)
+        
+        self.t0 = tk.StringVar()
+        entry = tk.Entry(self,textvariable=self.t0).grid(column=1,row=10)
+        self.t0.set("0.0")
+        self.t1 = tk.StringVar()
+        entry = tk.Entry(self,textvariable=self.t1).grid(column=3,row=10)
+        self.t1.set("1.0")
 
         #============Plot Dimensions============#
-        label = tk.Label(self, text = "Plot Dimension:").grid(column=0,row=9)
-        label = tk.Label(self, text = "(Xmin,Xmax) = (").grid(column=0,row=10)
-        label = tk.Label(self, text = "(Ymin,Ymax) = (").grid(column=0,row=11)
-        label = tk.Label(self, text = ",").grid(column=2,row=10)
-        label = tk.Label(self, text = ",").grid(column=2,row=11)
-        label = tk.Label(self, text = ")").grid(column=4,row=10)
-        label = tk.Label(self, text = ")").grid(column=4,row=11)
+        label = tk.Label(self, text = "Plot Dimension:").grid(column=0,row=12)
+        label = tk.Label(self, text = "(Xmin,Xmax) = (").grid(column=0,row=13)
+        label = tk.Label(self, text = "(Ymin,Ymax) = (").grid(column=0,row=14)
+        label = tk.Label(self, text = ",").grid(column=2,row=13)
+        label = tk.Label(self, text = ",").grid(column=2,row=14)
+        label = tk.Label(self, text = ")").grid(column=4,row=13)
+        label = tk.Label(self, text = ")").grid(column=4,row=14)
         
         self.Xmin = tk.StringVar()
-        entry = tk.Entry(self,textvariable=self.Xmin).grid(column=1,row=10)
+        entry = tk.Entry(self,textvariable=self.Xmin).grid(column=1,row=13)
         self.Xmin.set("-5.0")
         self.Ymin = tk.StringVar()
-        entry = tk.Entry(self,textvariable=self.Ymin).grid(column=1,row=11)
+        entry = tk.Entry(self,textvariable=self.Ymin).grid(column=1,row=14)
         self.Ymin.set("-5.0")
         self.Xmax = tk.StringVar()
-        entry = tk.Entry(self,textvariable=self.Xmax).grid(column=3,row=10)
+        entry = tk.Entry(self,textvariable=self.Xmax).grid(column=3,row=13)
         self.Xmax.set("5.0")
         self.Ymax = tk.StringVar()
-        entry = tk.Entry(self,textvariable=self.Ymax).grid(column=3,row=11)
+        entry = tk.Entry(self,textvariable=self.Ymax).grid(column=3,row=14)
         self.Ymax.set("5.0")
 
         #============Num of Plots============#
         label = tk.Label(self, text = "Num Plots:")
-        label.grid(column=0,row=12)
+        label.grid(column=0,row=16)
         
         self.numPlots = tk.StringVar()
-        entry = tk.Entry(self,textvariable=self.numPlots).grid(column=1,row=12)
+        entry = tk.Entry(self,textvariable=self.numPlots).grid(column=1,row=16)
         self.numPlots.set("5")
         
         ttk.Separator(self,orient="horizontal").grid(column=0,row=1, sticky="ew", columnspan="5")
         ttk.Separator(self,orient="horizontal").grid(column=0,row=4, sticky="ew", columnspan="5")
         ttk.Separator(self,orient="horizontal").grid(column=0,row=8, sticky="ew", columnspan="5")
-        ttk.Separator(self,orient="horizontal").grid(column=0,row=13, sticky="ew", columnspan="5")
-        ttk.Separator(self,orient="horizontal").grid(column=0,row=20, sticky="ew", columnspan="5")
+        ttk.Separator(self,orient="horizontal").grid(column=0,row=11, sticky="ew", columnspan="5")
+        ttk.Separator(self,orient="horizontal").grid(column=0,row=17, sticky="ew", columnspan="5")
+        ttk.Separator(self,orient="horizontal").grid(column=0,row=22, sticky="ew", columnspan="5")
 #        ttk.Separator(self,orient="vertical").grid(column=1,row=1, sticky="ns", rowspan="15")
 
         #============Simulation Parameters============# 
-        label = tk.Label(self, text = "Simulation parameters:").grid(column=0,row=14)        
-        label = tk.Label(self, text = "T init:").grid(column=0,row=15)        
-        label = tk.Label(self, text = "T final:").grid(column=0,row=16)        
-        label = tk.Label(self, text = "Num points:").grid(column=0,row=17) 
+        label = tk.Label(self, text = "Simulation parameters:").grid(column=0,row=18)        
+        label = tk.Label(self, text = "T init:").grid(column=0,row=19)        
+        label = tk.Label(self, text = "T final:").grid(column=0,row=20)        
+        label = tk.Label(self, text = "Num points:").grid(column=0,row=21) 
         
         self.TInit = tk.StringVar()
-        entry = tk.Entry(self,textvariable=self.TInit).grid(column=1,row=15)
+        entry = tk.Entry(self,textvariable=self.TInit).grid(column=1,row=19)
         self.TInit.set("0.0")
         self.TFinal = tk.StringVar()
-        entry = tk.Entry(self,textvariable=self.TFinal).grid(column=1,row=16)
+        entry = tk.Entry(self,textvariable=self.TFinal).grid(column=1,row=20)
         self.TFinal.set("15.0")
         self.NumPoints = tk.StringVar()
-        entry = tk.Entry(self,textvariable=self.NumPoints).grid(column=1,row=17)
+        entry = tk.Entry(self,textvariable=self.NumPoints).grid(column=1,row=21)
         self.NumPoints.set("1000")
 
         
@@ -221,24 +235,23 @@ class FunctionPage(tk.Frame):
         
         canvas = FigureCanvasTkAgg(p, master=self)
         canvas.show()
-        canvas.get_tk_widget().grid(column=0, row= 23, columnspan=6)# side=tk.TOP, fill=tk.BOTH, expand=1)
+        canvas.get_tk_widget().grid(column=0, row= 24, columnspan=6)# side=tk.TOP, fill=tk.BOTH, expand=1)
         
     def tResponse(self):
 
         #Function to call phase plane plot function
-        IC0=array([float(self.X0.get()), float(self.Y0.get())])
-        IC1=array([float(self.X1.get()), float(self.Y1.get())])
+        IC=array([float(self.t0.get()), float(self.t1.get())])
         dim = [float(self.Xmin.get()),float(self.Ymin.get()),float(self.Xmax.get()),float(self.Ymax.get())]
         
-        p = tResponse(self.fun,[IC0,IC1],dim,int(self.numPlots.get()),self.ODESolver.get(),
+        p = tResponse(self.fun,IC,dim,int(self.numPlots.get()),self.ODESolver.get(),
                          [float(self.TInit.get()),float(self.TFinal.get()),int(self.NumPoints.get())])
         
 
         canvas = FigureCanvasTkAgg(p, master=self)
         canvas.show()
-        canvas.get_tk_widget().grid(column=0, row= 23, columnspan=6)# side=tk.TOP, fill=tk.BOTH, expand=1)
+        canvas.get_tk_widget().grid(column=0, row= 24, columnspan=6)# side=tk.TOP, fill=tk.BOTH, expand=1)
 
 
 if __name__ == "__main__":
-    app = LieGUIApp()
+    app = PPGUIApp()
     app.mainloop()

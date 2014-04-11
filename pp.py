@@ -181,9 +181,6 @@ def tResponse(functionName, IC = None, dim = None, numXo = None, ODESolver = 'De
 
     dxfunction, dx2function, dxic = init.init(functionName)
     
-    if (IC is not None):
-        dxic = IC
-   
     if (simSpecs is not None):
         tInit = simSpecs[0]
         tFinal = simSpecs[1]
@@ -193,15 +190,10 @@ def tResponse(functionName, IC = None, dim = None, numXo = None, ODESolver = 'De
         tFinal = 15
         numT = 1000
     
+   
     #similiar to step response
-    X0 = array([1, 1])                      
+    X0 = IC
 
-    testIC(dxfunction,dxic[0],dxic[1])
-    
-    A_f1 = evalJacobian(dx2function,dxic[1])  
-
-    lambda1, lambda2 = linalg.eigvals(A_f1)
-        
     t = linspace(tInit, tFinal,  numT)              # time
    
     X, infodict = integrateFucn(dxfunction, X0, t, ODESolver)
@@ -239,7 +231,7 @@ def phasePlaneGUI(functionName, IC = None, dim = None, numXo = None, ODESolver =
         numT = 1000
     
     #similiar to step response
-    X0 = array([1, 1])                      
+    X0 = IC[1]                      
 
     testIC(dxfunction,dxic[0],dxic[1])
     
