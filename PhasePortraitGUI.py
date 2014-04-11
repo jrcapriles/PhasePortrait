@@ -16,6 +16,7 @@ import Tkinter as tk
 import ttk
 
 from pp import phasePlaneGUI
+from pp import tResponse
 
 import matplotlib
 matplotlib.use('TkAgg')
@@ -124,7 +125,7 @@ class FunctionPage(tk.Frame):
             #============Plot Button============#
         button2 = tk.Button(self,text=u"Phase Plot Me!", command=self.plot).grid(column=3,row=15)
     
-        
+        button3 = tk.Button(self,text=u"Time Response!", command=self.tResponse).grid(column=3,row=16)
         #============ODE solver============#
         label = tk.Label(self, text = "ODE Solver:").grid(column=0,row=3)
         self.ODESolver = tk.StringVar()
@@ -216,6 +217,20 @@ class FunctionPage(tk.Frame):
         dim = [float(self.Xmin.get()),float(self.Ymin.get()),float(self.Xmax.get()),float(self.Ymax.get())]
         
         p = phasePlaneGUI(self.fun,[IC0,IC1],dim,int(self.numPlots.get()),self.ODESolver.get(),
+                         [float(self.TInit.get()),float(self.TFinal.get()),int(self.NumPoints.get())])
+        
+        canvas = FigureCanvasTkAgg(p, master=self)
+        canvas.show()
+        canvas.get_tk_widget().grid(column=0, row= 23, columnspan=6)# side=tk.TOP, fill=tk.BOTH, expand=1)
+        
+    def tResponse(self):
+
+        #Function to call phase plane plot function
+        IC0=array([float(self.X0.get()), float(self.Y0.get())])
+        IC1=array([float(self.X1.get()), float(self.Y1.get())])
+        dim = [float(self.Xmin.get()),float(self.Ymin.get()),float(self.Xmax.get()),float(self.Ymax.get())]
+        
+        p = tResponse(self.fun,[IC0,IC1],dim,int(self.numPlots.get()),self.ODESolver.get(),
                          [float(self.TInit.get()),float(self.TFinal.get()),int(self.NumPoints.get())])
         
 

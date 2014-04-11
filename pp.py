@@ -177,6 +177,51 @@ def phasePlane(functionName, IC = None, dim = None, numXo = None, ODESolver = 'D
     p.show()
     return p
 
+def tResponse(functionName, IC = None, dim = None, numXo = None, ODESolver = 'Default', simSpecs = None):
+
+    dxfunction, dx2function, dxic = init.init(functionName)
+    
+    if (IC is not None):
+        dxic = IC
+   
+    if (simSpecs is not None):
+        tInit = simSpecs[0]
+        tFinal = simSpecs[1]
+        numT = simSpecs[2]
+    else:
+        tInit = 0.0
+        tFinal = 15
+        numT = 1000
+    
+    #similiar to step response
+    X0 = array([1, 1])                      
+
+    testIC(dxfunction,dxic[0],dxic[1])
+    
+    A_f1 = evalJacobian(dx2function,dxic[1])  
+
+    lambda1, lambda2 = linalg.eigvals(A_f1)
+        
+    t = linspace(tInit, tFinal,  numT)              # time
+   
+    X, infodict = integrateFucn(dxfunction, X0, t, ODESolver)
+#    infodict['message']                     # >>> 'Integration successful.'
+
+    y1, y2 = X.T
+ 
+    #Time response of the system
+    f1 = p.figure(figsize=(5,4), dpi=100)
+    p.plot(t, y1, 'r-', label='y1(t)')
+    p.plot(t, y2  , 'b-', label='y2(t)')
+    p.grid()
+    p.legend(loc='best')
+    p.xlabel('time')
+    p.ylabel('outputs')
+    p.title('Evolution of y1 and y2')
+    #p.show()
+    
+    return f1
+    
 def phasePlaneGUI(functionName, IC = None, dim = None, numXo = None, ODESolver = 'Default', simSpecs = None):
     
     dxfunction, dx2function, dxic = init.init(functionName)
@@ -232,6 +277,7 @@ def phasePlaneGUI(functionName, IC = None, dim = None, numXo = None, ODESolver =
     vcolors = p.cm.autumn_r(linspace(0.3, 0.9, len(xvalues)))  # colors for each trajectory
 
     #Phase plane of the system
+    #figsize=(6,6)
     f2 = Figure(figsize=(5,4), dpi=100)#p.figure()
     f21 = f2.add_subplot(111)
 
