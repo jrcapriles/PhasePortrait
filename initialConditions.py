@@ -29,4 +29,8 @@ X_f1_Duffing = array([     1. ,  0.])
 #r,w = 1,1
 X_f0_Vanderpol = array([     0. ,  0.])
 X_f1_Vanderpol = array([     3. ,  1.])
+
+#================== Simple Pendulum ==================
+X_f0_Pendulum = array([     0. ,  0.])
+X_f1_Pendulum = array([     1. ,  1.])
 #========================================================

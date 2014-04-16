@@ -45,7 +45,7 @@ m = 2
 #================== Hyperbolic Equilibrium point ==================
 alpha_hyper = -2.    # alpha 2., -2.
 #=========================================================
-
+k_pen = 1.0
 
 bb= 2.1
 cc= 2.0
@@ -109,6 +109,12 @@ def dX_dt_Vanderpol(X,t=0):
     """ Return the vanderpol oscilator derivative """
     return array([X[1],
                   -r*(X[0]**2-1)*X[1]-w**2*X[0]])
+                  
+#================== Simple Pendulum =================
+def dX_dt_Pendulum(X,t=0):
+    """ Return the pendulum derivatives """
+    return array([X[1],
+                  -k_pen*X[0]])
 #=========================================================
 
 
@@ -162,3 +168,9 @@ def d2X_dt2_Vanderpol(X, t=0):
     return array([[0,   1     ],
                   [-2*r*X[1]*X[0]-w**2 ,   r*(1-X[0]**2)]])  
 #========================================================
+
+#================== Simple Pendulum =================
+def d2X_dt2_Pendulum(X,t=0):
+    """ Return the pendulum derivatives """
+    return array([[0, 1],
+                  [-k_pen,0]])

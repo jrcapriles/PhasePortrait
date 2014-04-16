@@ -11,6 +11,8 @@ Created on Fri Mar 28 11:19:38 2014
 
 @author: joser
 """
+#CHUA oscillator TODO
+#LORENZ
 
 import Tkinter as tk
 import ttk
@@ -45,7 +47,7 @@ class PPGUIApp(tk.Tk):
        
         fun = 'N/A' 
         i=0
-        for F in (HomePage, FunctionPage, FunctionPage, FunctionPage, FunctionPage, FunctionPage):
+        for F in (HomePage, FunctionPage, FunctionPage, FunctionPage, FunctionPage, FunctionPage, FunctionPage):
             if i==1:
                 fun = 'Simple'
             elif i==2:
@@ -56,7 +58,9 @@ class PPGUIApp(tk.Tk):
                 fun = 'Magnetic'
             elif i==5:
                 fun ='Violin'
-            
+            elif i==6:
+                fun ='Pendulum'            
+                
             frame = F(screens, self,fun)            
             self.frames[i] = frame
             # stack all of the pages together; 
@@ -83,7 +87,7 @@ class HomePage(tk.Frame):
         self.label.grid(column=0,row=3)
         self.funcVar = tk.StringVar()
         self.funcVar.set("Vanderpol")
-        self.choices = ['Simple', 'Vanderpol', 'Duffing','Magnetic', 'Violin'] #'Hyperbolic'
+        self.choices = ['Simple', 'Vanderpol', 'Duffing','Magnetic', 'Violin', 'Pendulum'] #'Hyperbolic'
         #Drop down menu to select function to plot
         self.option = tk.OptionMenu(self, self.funcVar, *self.choices)
         self.option.grid(column = 1, row =3)
@@ -107,6 +111,8 @@ class HomePage(tk.Frame):
             controller.show_screen(4)
         elif function == 'Violin': 
             controller.show_screen(5)
+        elif function == 'Pendulum': 
+            controller.show_screen(6)
             
        
 
