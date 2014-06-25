@@ -330,5 +330,5 @@ def phasePlaneGUI(functionName, IC = None, dim = None, numXo = None, ODESolver =
     #f2.savefig('plots/' + functionName + '_phase_portrait.png')
     
     #p.show()
-    p.savefig('plots/' + functionName + 'field.png')
+    #p.savefig('plots/' + functionName + 'field.png')
     return f2
