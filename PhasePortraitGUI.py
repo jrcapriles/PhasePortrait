@@ -26,7 +26,6 @@ from PhasePortraitFunctionPageGUI import FunctionPage
 import matplotlib
 matplotlib.use('TkAgg')
 
-from numpy import arange, sin, pi, array
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 from matplotlib.backend_bases import *
 from matplotlib.figure import Figure
