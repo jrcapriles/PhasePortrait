@@ -28,11 +28,8 @@ class HomePage(tk.Frame):
         tk.Frame.__init__(self, parent) 
         self.grid()
         self.fun = fun
-        self.label = tk.Label(self, text="Home page!", font=TITLE_FONT)
-        self.label.grid(column=1,row=0, pady=10)
-
-        self.label = tk.Label(self, text = "Functions:")
-        self.label.grid(column=0,row=3)
+        self.label = tk.Label(self, text="Phase Portrait Plotter", font=TITLE_FONT).grid(column=1,row=0, pady=10)
+        self.label = tk.Label(self, text = "Functions:").grid(column=0,row=3)
         self.funcVar = tk.StringVar()
         self.funcVar.set("Vanderpol")
         self.choices = ['Simple', 'Vanderpol', 'Duffing','Magnetic', 'Violin', 'Pendulum'] #'Hyperbolic'
