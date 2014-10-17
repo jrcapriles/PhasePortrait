@@ -50,23 +50,16 @@ class PPGUIApp(tk.Tk):
         self.show_screen(0)
 
     def createScreens(self,screens):
+        screenOrder={0:'N/a',
+                     1:'Simple',
+                     2:'Vanderpol',
+                     3:'Duffing',
+                     4:'Magnetic',
+                     5:'Violin',
+                     6:'Pendulum'}
         i=0
         for F in (HomePage, FunctionPage, FunctionPage, FunctionPage, FunctionPage, FunctionPage, FunctionPage):
-            if i==0:
-                fun = 'N/A'
-            if i==1:
-                fun = 'Simple'
-            elif i==2:
-                fun = 'Vanderpol'
-            elif i==3:
-                fun = 'Duffing'
-            elif i==4:
-                fun = 'Magnetic'
-            elif i==5:
-                fun ='Violin'
-            elif i==6:
-                fun ='Pendulum'            
-                
+            fun = screenOrder[i]     
             frame = F(screens, self,fun)            
             self.frames[i] = frame
             # stack all of the pages together; 
