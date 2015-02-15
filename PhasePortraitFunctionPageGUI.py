@@ -8,10 +8,10 @@ Created on Tue Jun 24 22:32:52 2014
 import Tkinter as tk
 import ttk
 
-from pp import phasePlaneGUI
+from pp import phasePlaneGUI, phasePlaneAnimateGUI
 from pp import tResponse
 from PhasePortraitHomePageGUI import HomePage
-
+import init as init
 
 import matplotlib
 matplotlib.use('TkAgg')
@@ -20,8 +20,10 @@ from numpy import array
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 from matplotlib.backend_bases import *
 from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
 import sys
-
+import matplotlib.animation as animation
+import scipy.integrate as integrate
 
 TITLE_FONT = ("Helvetica", 18, "bold")
 
@@ -50,6 +52,7 @@ class FunctionPage(tk.Frame):
     def createButtons(self,controller):
         self.button_go_back = tk.Button(self, text="Go back!", command=lambda: controller.show_screen(0)).grid(column = 3, row =19)
         self.button_phase_plot = tk.Button(self,text=u"Phase Plot Me!", command=self.plot).grid(column=3,row=20)
+        self.button_animate = tk.Button(self,text=u"Animate Me!", command=self.animate).grid(column=4,row=20)
         self.button_time_response = tk.Button(self,text=u"Time Response!", command=self.tResponse).grid(column=3,row=21)
 
         self.ODESolver = tk.StringVar()
@@ -151,7 +154,121 @@ class FunctionPage(tk.Frame):
     def enableZoom(self):
         self.button_zoom_in = tk.Button(self,text=u"+", command=self.zoom_in).grid(column=4,row=23)
         self.button_zoom_out = tk.Button(self,text=u"-", command=self.zoom_out).grid(column=5,row=23)
+    
+    def animate(self):
         
+        dxfunction, dx2function, dxic = init.init(self.fun)
+        
+        self.enableZoom()
+       #Function to call phase plane plot function
+        IC0=array([float(self.X0.get()), float(self.Y0.get())])
+        IC1=array([float(self.X1.get()), float(self.Y1.get())])
+        dim = [float(self.Xmin.get()),float(self.Ymin.get()),float(self.Xmax.get()),float(self.Ymax.get())]
+        
+        
+        N_trajectories = int(self.numPlots.get())
+
+        def lorentz_deriv((x, y, z), t0, sigma=10., beta=8./3, rho=28.0):
+            """Compute the time-derivative of a Lorentz system."""
+            return [sigma * (y - x), x * (rho - z) - y, x * y - beta * z]
+
+
+        self.xlim = 10
+        self.ylim = 10
+        self.zlim = 10
+        
+        X_0= -float(self.Y1.get())/2 + float(self.Y1.get())* np.random.random((N_trajectories, 3))
+        
+        # Choose random starting points, uniformly distributed from -15 to 15
+        np.random.seed(1)
+        
+        #x0 = -15 + 30 * np.random.random((N_trajectories, 3))
+        x0 = (-0.5 + np.random.random((N_trajectories, 3)))
+
+        # Solve for the trajectories
+
+        t = np.linspace(float(self.TInit.get()), float(self.TFinal.get()), int(self.NumPoints.get()))
+        x_t = np.asarray([integrate.odeint(dxfunction, x0i, t)
+                  for x0i in X_0]) #x0])
+
+        # Set up figure & 3D axis for animation
+        fig = plt.figure()
+
+        canvas = FigureCanvasTkAgg(fig, master=self)
+        canvas.get_tk_widget().grid(column=0, row= 24, columnspan=20,rowspan=20)
+
+        ax = fig.add_axes([0, 0, 1, 1], projection='3d')
+        ax.axis('off')
+
+        # choose a different color for each trajectory
+        colors = plt.cm.jet(np.linspace(0, 1, N_trajectories))
+
+        # set up lines and points
+        lines = sum([ax.plot([], [], [], '-', c=c)
+             for c in colors], [])
+        pts = sum([ax.plot([], [], [], 'o', c=c)
+           for c in colors], [])
+
+        # prepare the axes limits
+        
+        ax.set_xlim((-self.xlim, self.xlim))
+        ax.set_ylim((-self.ylim, self.ylim))
+        ax.set_zlim((-self.zlim, self.zlim))
+        # set point-of-view: specified by (altitude degrees, azimuth degrees)
+        ax.view_init(30, 0)
+        ax.grid()
+
+        # initialization function: plot the background of each frame
+        def init_anim():
+            for line, pt in zip(lines, pts):
+                line.set_data([], [])
+                line.set_3d_properties([])
+
+                pt.set_data([], [])
+                pt.set_3d_properties([])
+            return lines + pts
+
+        # animation function.  This will be called sequentially with the frame number
+        def animate(i):
+            # we'll step two time-steps per frame.  This leads to nice results.
+            i = (2 * i) % x_t.shape[1]
+
+            for line, pt, xi in zip(lines, pts, x_t):
+                x, y, z = xi[:i].T
+                line.set_data(x, y)
+                line.set_3d_properties(z)
+
+                pt.set_data(x[-1:], y[-1:])
+                pt.set_3d_properties(z[-1:])
+
+            ax.view_init(30, 0.3 * i)
+            fig.canvas.draw()
+            return lines + pts
+
+        # instantiate the animator.
+        anim = animation.FuncAnimation(fig, animate, init_func=init_anim,
+                               frames=1000, interval=30, blit=True, repeat=False)
+
+        # Save as mp4. This requires mplayer or ffmpeg to be installed
+        #anim.save('lorentz_attractor.mp4', fps=15, extra_args=['-vcodec', 'libx264'])
+        canvas.show()
+        #plt.show()
+             
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    
+    
     def plot(self):
         self.enableZoom()
        #Function to call phase plane plot function

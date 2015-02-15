@@ -6,10 +6,16 @@ Created on Wed Feb  5 17:53:18 2014
 """
 
 from numpy import *
+import numpy as np
 import pylab as p
 import init as init
 from scipy import integrate
 from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
+
+
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib.colors import cnames
 #from matplotlib.pyplot import *
 
 #Test initial condition (should be true)
@@ -332,3 +338,116 @@ def phasePlaneGUI(functionName, IC = None, dim = None, numXo = None, ODESolver =
     #p.show()
     #p.savefig('plots/' + functionName + 'field.png')
     return f2
+
+
+
+
+#Animate
+def phasePlaneAnimateGUI(functionName, IC = None, dim = None, numXo = None, ODESolver = 'Default', simSpecs = None):
+    
+    N_trajectories = 20
+
+    def chuas_deriv((x,y,z), t0):#, alpha=15.6, beta=28., m0=-1.143, m1=-0.714):
+        """Compute the time-derivative of a Chuas system."""
+        alpha=15.5
+        beta=25.5
+        m0=-8./7.
+        m1=-5./7.
+        h = m1*x+0.5*(m0-m1)*(abs(x+1)-abs(x-1));
+        return [alpha*(y-x-h), x - y + z, -beta*y]
+    
+
+        def lorentz_deriv((x, y, z), t0, sigma=10., beta=8./3, rho=28.0):
+            """Compute the time-derivative of a Lorentz system."""
+            return [sigma * (y - x), x * (rho - z) - y, x * y - beta * z]
+
+        functions={'Chuas':chuas_deriv,
+                    'Lorentz':lorentz_deriv}
+   
+        if self.funcVar.get() == 'Chuas':
+            self.xlim = 2
+            self.ylim = 2
+            self.zlim = 2
+        elif self.funcVar.get() == 'Lorentz':
+            self.xlim = 50
+            self.ylim = 50
+            self.zlim = 50
+        
+        X_0={'Chuas':(-0.5 + np.random.random((N_trajectories, 3))),
+             'Lorentz':-15 + 30 * np.random.random((N_trajectories, 3))}
+        # Choose random starting points, uniformly distributed from -15 to 15
+        np.random.seed(1)
+        
+        #x0 = -15 + 30 * np.random.random((N_trajectories, 3))
+        x0 = (-0.5 + np.random.random((N_trajectories, 3)))
+
+        # Solve for the trajectories
+        t = np.linspace(0, 100, int(self.frames.get()))
+        x_t = np.asarray([integrate.odeint(functions[self.funcVar.get()], x0i, t)
+                  for x0i in X_0[self.funcVar.get()]]) #x0])
+
+        # Set up figure & 3D axis for animation
+        fig = plt.figure()
+
+        canvas = FigureCanvasTkAgg(fig, master=self)
+        canvas.get_tk_widget().grid(column=0, row= 10, columnspan=20,rowspan=20)
+
+        ax = fig.add_axes([0, 0, 1, 1], projection='3d')
+        ax.axis('off')
+
+        # choose a different color for each trajectory
+        colors = plt.cm.jet(np.linspace(0, 1, N_trajectories))
+
+        # set up lines and points
+        lines = sum([ax.plot([], [], [], '-', c=c)
+             for c in colors], [])
+        pts = sum([ax.plot([], [], [], 'o', c=c)
+           for c in colors], [])
+
+        # prepare the axes limits
+        
+        ax.set_xlim((-self.xlim, self.xlim))
+        ax.set_ylim((-self.ylim, self.ylim))
+        ax.set_zlim((-self.zlim, self.zlim))
+        # set point-of-view: specified by (altitude degrees, azimuth degrees)
+        ax.view_init(30, 0)
+        ax.grid()
+
+        # initialization function: plot the background of each frame
+        def init():
+            for line, pt in zip(lines, pts):
+                line.set_data([], [])
+                line.set_3d_properties([])
+
+                pt.set_data([], [])
+                pt.set_3d_properties([])
+            return lines + pts
+
+        # animation function.  This will be called sequentially with the frame number
+        def animate(i):
+            # we'll step two time-steps per frame.  This leads to nice results.
+            i = (2 * i) % x_t.shape[1]
+
+            for line, pt, xi in zip(lines, pts, x_t):
+                x, y, z = xi[:i].T
+                line.set_data(x, y)
+                line.set_3d_properties(z)
+
+                pt.set_data(x[-1:], y[-1:])
+                pt.set_3d_properties(z[-1:])
+
+            ax.view_init(30, 0.3 * i)
+            fig.canvas.draw()
+            return lines + pts
+
+        # instantiate the animator.
+        anim = animation.FuncAnimation(fig, animate, init_func=init,
+                               frames=1000, interval=30, blit=True, repeat=False)
+
+        # Save as mp4. This requires mplayer or ffmpeg to be installed
+        #anim.save('lorentz_attractor.mp4', fps=15, extra_args=['-vcodec', 'libx264'])
+        #canvas.show()
+        #plt.show()
+        return canvas
+
+     
